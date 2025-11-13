@@ -7,7 +7,6 @@ load_dotenv()
 BASE_URL = os.environ.get("BASE_URL")
 
 def create_dummy_users():
-    
     # Generate 10 dummy users
     for i in range(1, 11):
         payload = {
