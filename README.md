@@ -3,7 +3,9 @@ A privacy-conscious friend location tracking app that nudges you when a friend i
 
 # Architecture
 **Frontend**: Expo (React Native)
+
 **Backend**: FastAPI
+
 **DB**: PostgreSQL hosted on Supabase via SQLAlchemy
 
 # Getting Set Up
