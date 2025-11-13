@@ -11,6 +11,7 @@ uvicorn main:app --reload
 Where all your `pip install`'s will be writing to. The `requirements.txt` tells you what needs to be in here.
 
 ```bash
+# make sure that your conda environment is off already (conda deactivate)
 python -m venv .venv
 source .venv/bin/activate
 

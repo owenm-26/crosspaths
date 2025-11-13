@@ -3,7 +3,7 @@ expo-env.d.ts
 
 *.env
 *.venv
-*/__pycache__
+**/__pycache__
 # dependencies
 node_modules/
 
