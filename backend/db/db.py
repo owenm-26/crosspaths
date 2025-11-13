@@ -25,7 +25,7 @@ def create_tables_orm(engine):
     Base.metadata.create_all(engine, checkfirst=True)
 
 def create_session(engine):
-    Session = sessionmaker(bind=engine)
+    Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     session = Session()
 
     return session
