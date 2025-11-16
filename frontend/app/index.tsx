@@ -1,4 +1,5 @@
 import { Text, View } from "react-native";
+import instance from "../services/api"
 
 export default function Index() {
   return (

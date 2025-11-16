@@ -11,5 +11,10 @@ A privacy-conscious friend location tracking app that nudges you when a friend i
 # Getting Set Up
 Read the `README.md`'s in `/backend` and `/frontend`
 
+# Running the Project 
+Run `./start.sh` in `/backend` and `frontend`. 
+- This will run in a way s.t. mobile devices can access the server
+- Make sure to run `chmod +x ./start` for each of them if you get `PERMISSION DENIED`
+
 ## Slides
 [https://docs.google.com/presentation/d/1OUQljetZL6OpLHpde9xCRNRk2K-24mI-ATIwtHvCeeI/edit?usp=sharing](https://docs.google.com/presentation/d/1OUQljetZL6OpLHpde9xCRNRk2K-24mI-ATIwtHvCeeI/edit?usp=sharing)
