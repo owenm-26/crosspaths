@@ -1,35 +1,160 @@
-from sqlalchemy import String, DateTime, Float, func, ForeignKey
+from sqlalchemy import String, DateTime, Float, func, ForeignKey, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
 
 class User(Base):
     __tablename__ = "users"
-
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    home_location: Mapped["Location"] = relationship(back_populates="user", uselist=False) # if we want the user to just "type in their home city" we will need to map that back into a location
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    phone_number: Mapped[str] = mapped_column(String, primary_key=True, index=True)
+    # email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
+    first_name: Mapped[str] = mapped_column(String, nullable=False)
+    last_name: Mapped[str] = mapped_column(String, nullable=False)
+    home_location: Mapped[str] = mapped_column(String, nullable=False) 
+    curr_location: Mapped[str] = mapped_column(String, nullable=False)
+    city: Mapped[str] = mapped_column(String, nullable=False)
+    notif_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default = False)
+    
+    # Relationship to friendships where *this user* is user_id
+    friendships: Mapped[list["Friend"]] = relationship(
+        "Friend",
+        back_populates="user",
+        foreign_keys="Friend.user_phone"
+    )
 
-    # (Use uselist=False for one-to-one relationships; omit it for one-to-many)
-    current_location: Mapped["Location"] = relationship(back_populates="user", uselist=False)
+    # Relationship to friendships where *this user* is friend_id
+    friend_of: Mapped[list["Friend"]] = relationship(
+        "Friend",
+        back_populates="friend",
+        foreign_keys="Friend.friend_phone"
+    )
+
+    # Friend requests sent by this user
+    friendships_sent: Mapped[list["FriendRequest"]] = relationship(
+        "FriendRequest",
+        back_populates="user",   # matches FriendRequest.user
+        foreign_keys="FriendRequest.from_phone"
+    )
+
+    # Friend requests received by this user
+    friendships_received: Mapped[list["FriendRequest"]] = relationship(
+        "FriendRequest",
+        back_populates="friend",  # matches FriendRequest.friend
+        foreign_keys="FriendRequest.to_phone"
+    )
+
+
+    # Inbox notifications sent by this user
+    notifications_sent: Mapped[list["Inbox"]] = relationship(
+        "Inbox",
+        back_populates="user",
+        foreign_keys="Inbox.from_phone"
+    )
+
+    # Inbox notifications received by this user
+    notifications_received: Mapped[list["Inbox"]] = relationship(
+        "Inbox",
+        back_populates="friend",
+        foreign_keys="Inbox.to_phone"
+    )
+
+
+
+
+
+class Friend(Base):
+
+    __tablename__ = "friends"
+
+    user_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    friend_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    # ORM relationships
+    user: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[user_phone],
+        back_populates="friendships"
+    )
+
+    friend: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[friend_phone],
+        back_populates="friend_of"
+    )
+
+class FriendRequest(Base):
+    
+    __tablename__ = "friend_requests"
+    
+    from_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    to_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    accepted: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=False
+    )
+
+    # ORM relationships
+    user: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[from_phone],
+        back_populates="friendships_sent"
+    )
+
+    friend: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[to_phone],
+        back_populates="friendships_received"
+    )
+
+class Inbox(Base):
+
+    __tablename__="inbox"
+
+    notification: Mapped[float] = mapped_column(Float, primary_key=True)
+    
+
+    from_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    to_phone: Mapped[str] = mapped_column(
+        ForeignKey("users.phone_number"),
+        primary_key=True
+    )
+
+    # ORM relationships
+    user: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[from_phone],
+        back_populates="notifications_sent"
+    )
+
+    friend: Mapped["User"] = relationship(
+        "User",
+        foreign_keys=[to_phone],
+        back_populates="notifications_received"
+    )
+
 
 
 class Location(Base):
     __tablename__ = "locations"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    longitude: Mapped[float] = mapped_column(Float)
-    latitude: Mapped[float] = mapped_column(Float)
-    closest_city: Mapped[str] = mapped_column(String)
-
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user: Mapped["User"] = relationship(back_populates="current_location")
-
-
-class City(Base):
-    __tablename__ = "cities"
-
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String, nullable=False)
-    state: Mapped[str] = mapped_column(String(30), nullable=False) #CA or something
+    zipcode: Mapped[str] = mapped_column(String, primary_key=True, index=True)
+    city: Mapped[str] = mapped_column(String, nullable=False)
+    state: Mapped[str] = mapped_column(String, nullable=False)
