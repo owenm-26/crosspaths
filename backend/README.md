@@ -2,7 +2,8 @@
 This is the FastAPI Server. To interact with the DB or any APIs you need this running.
 
 ```bash
-uvicorn main:app --reload
+# make sure to run "chmod +x ./run.sh if your get 'permission denied'
+./start.sh
 ```
 
 ## Setup
