@@ -1,16 +1,7 @@
-import { Text, View } from "react-native";
-import instance from "../services/api"
+import { Redirect } from "expo-router";
 
+// immediately redirect to login page so that the first
+// screen always start from login/registration
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
-  );
+  return <Redirect href="/login" />;
 }
