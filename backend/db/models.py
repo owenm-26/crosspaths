@@ -1,4 +1,4 @@
-from sqlalchemy import String, DateTime, Float, func, ForeignKey, Boolean
+from sqlalchemy import String, DateTime, Float, func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .db import Base
 
@@ -12,7 +12,7 @@ class User(Base):
     home_location: Mapped[str] = mapped_column(String, nullable=False) 
     curr_location: Mapped[str] = mapped_column(String, nullable=False)
     city: Mapped[str] = mapped_column(String, nullable=False)
-    notif_enabled: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default = False)
+    notif_enabled: Mapped[float] = mapped_column(Float, nullable=False, server_default = "0")
     
     # Relationship to friendships where *this user* is user_id
     friendships: Mapped[list["Friend"]] = relationship(
@@ -102,8 +102,8 @@ class FriendRequest(Base):
         primary_key=True
     )
 
-    accepted: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, server_default=False
+    accepted: Mapped[float] = mapped_column(
+        Float, nullable=False, server_default="0"
     )
 
     # ORM relationships
@@ -155,6 +155,6 @@ class Location(Base):
     __tablename__ = "locations"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    zipcode: Mapped[str] = mapped_column(String, primary_key=True, index=True)
+    zipcode: Mapped[str] = mapped_column(String, nullable=False)
     city: Mapped[str] = mapped_column(String, nullable=False)
     state: Mapped[str] = mapped_column(String, nullable=False)
