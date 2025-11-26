@@ -1,17 +1,22 @@
 // frontend/services/api.ts
 import axios from 'axios';
-import Constants from 'expo-constants';
 
-const API_URL = Constants.expoConfig?.extra?.apiUrl;
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 console.log('🌐 Connecting to API:', API_URL);
 
-const instance = axios.create({
+const api = axios.create({
   baseURL: API_URL,
-  timeout: 1000,
+  timeout: 5000,
   headers: {
-    'Content-Type': 'application/json',
-  }
+    "Content-Type": "application/json",
+  },
 });
 
-export default instance
+// ----- registration api -----
+export const registerUser = async (data: any) => {
+  return api.post("/users", data)
+};
+
+// export axios instance for other future requests
+export default api;
