@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import { registerUser } from "../services/api";
 import users from "../data/mock_users.json"
 
 export default function RegisterScreen() {
@@ -15,19 +16,12 @@ export default function RegisterScreen() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     setError("");
 
     // Phone must be 10 digits
     if (!/^\d{10}$/.test(phone)) {
       setError("Phone number must be exactly 10 digits.");
-      return;
-    }
-
-    // Phone number must be unique
-    const exists = users.some(u => u.phone === phone);
-    if (exists) {
-      setError("A user with this phone number already exists.");
       return;
     }
 
@@ -37,9 +31,32 @@ export default function RegisterScreen() {
       return;
     }
 
-    // Mock success → navigate to home
-    Alert.alert("Success", "Account created!");
-    router.replace("/home");
+    // build the payload expected by your fastAPI backend
+    const payload = {
+      phone_number: phone,
+      first_name: firstName,
+      last_name: lastName,
+      home_location: `${homeBaseCity}, ${homeBaseCountry}`,
+      curr_location: `${homeBaseCity}, ${homeBaseCountry}`, // placeholder until GPS
+      city: homeBaseCity,
+    }
+
+    try {
+      // try creating user in backend DB
+      const res = await registerUser(payload);
+
+      Alert.alert("Success", "Account created!");
+      router.replace("/home");
+    } catch (err) {
+      console.log("❌ Registration error:", err);
+      console.log("❌ Backend response:", err?.response?.data);
+
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else {
+        setError("Registration failed. Check internet or backend.");
+      }
+    }
   };
 
   return (
