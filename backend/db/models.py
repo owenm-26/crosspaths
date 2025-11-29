@@ -58,9 +58,6 @@ class User(Base):
     )
 
 
-
-
-
 class Friend(Base):
 
     __tablename__ = "friends"

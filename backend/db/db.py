@@ -3,6 +3,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
 
 metadata = MetaData()
 Base = declarative_base()
@@ -29,3 +30,13 @@ def create_session(engine):
     session = Session()
 
     return session
+
+# Dependency to get a DB session
+def get_db():
+    # try:
+    yield db_session
+    # finally:
+        # db_session.close()
+
+engine, connection = db_connect()
+db_session: Session = create_session(engine=engine)
