@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import users from "../data/mock_users.json";
 import { useRouter } from "expo-router";
+import { loginUser } from "@/services/api";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -9,30 +9,33 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    setError("");
+  const handleLogin = async () => {
+  setError("");
 
-    // Phone validation
-    if (!/^\d{10}$/.test(phone)) {
-      setError("Phone number must be 10 digits.");
-      return;
-    }
+  if (!/^\d{10}$/.test(phone)) {
+    setError("Phone number must be 10 digits.");
+    return;
+  }
 
-    const user = users.find(u => u.phone === phone);
+  try {
+    const response = await loginUser({
+      phone_number: phone,
+      password: password
+    });
 
-    if (!user) {
-      setError("No user found with that phone number.");
-      return;
-    }
+    console.log("Logged in:", response);
 
-    if (user.password !== password) {
-      setError("Incorrect password.");
-      return;
-    }
-
-    // Success
     router.replace("/home");
-  };
+  } 
+  catch (err) {
+    if (err.response?.data?.detail) {
+      setError(err.response.data.detail);
+    } else {
+      setError("Something went wrong. Try again.");
+    }
+  }
+};
+
 
   return (
     <View className="flex-1 bg-white justify-center px-8">

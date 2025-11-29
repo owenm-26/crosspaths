@@ -1,12 +1,18 @@
 from fastapi import FastAPI, Depends, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional
 from db import models
-from db.db import db_connect, create_session, create_tables_orm
+from db.db import create_tables_orm, engine, get_db
 from dummy_data_scripts import users, location
+from routes import auth
+from sqlalchemy.orm import Session
+
+
 app = FastAPI()
+
+# include all routers
+app.include_router(auth.router)
 
 # CORS setup
 app.add_middleware(
@@ -17,8 +23,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-engine, connection = db_connect()
-db_session: Session = create_session(engine=engine)
 
 @app.get("/")
 async def root():
@@ -40,13 +44,6 @@ def add_dummy_friend_requests():
 def add_dummy_inbox_notifications():
     res = users.create_dummy_notifications()
     return {"message": res}
-
-# Dependency to get a DB session
-def get_db():
-    try:
-        yield db_session
-    finally:
-        db_session.close()
 
 @app.get("/reset_db")
 def reset_db():
@@ -77,15 +74,6 @@ def create_user(
     body: Optional[UserCreate] = Body(None),
     db: Session = Depends(get_db)
 ):
-# def create_user(
-#     phone_number: str,
-#     first_name: str,
-#     last_name: str,
-#     home_location: str,
-#     curr_location: str,
-#     city: str,
-#     db: Session = Depends(get_db)
-# ):
     """
     This matches your new User schema.
     Called by the dummy user generator through POST requests.
