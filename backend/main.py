@@ -1,9 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Body
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from typing import Optional
 from db import models
 from db.db import db_connect, create_session, create_tables_orm
 from dummy_data_scripts import users, location
 app = FastAPI()
+
+# CORS setup
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 engine, connection = db_connect()
 db_session: Session = create_session(engine=engine)
@@ -46,20 +58,56 @@ def add_dummy_users():
     res = users.create_dummy_users()
     return {"message": res}
 
+class UserCreate(BaseModel):
+    phone_number: str
+    first_name: str
+    last_name: str
+    home_location: str
+    curr_location: str
+    city: str
+
 @app.post("/users")
 def create_user(
-    phone_number: str,
-    first_name: str,
-    last_name: str,
-    home_location: str,
-    curr_location: str,
-    city: str,
+    phone_number: Optional[str] = None,
+    first_name: Optional[str] = None,
+    last_name: Optional[str] = None,
+    home_location: Optional[str] = None,
+    curr_location: Optional[str] = None,
+    city: Optional[str] = None,
+    body: Optional[UserCreate] = Body(None),
     db: Session = Depends(get_db)
 ):
+# def create_user(
+#     phone_number: str,
+#     first_name: str,
+#     last_name: str,
+#     home_location: str,
+#     curr_location: str,
+#     city: str,
+#     db: Session = Depends(get_db)
+# ):
     """
     This matches your new User schema.
     Called by the dummy user generator through POST requests.
     """
+    # If JSON body sent (frontend), override query params
+    if body:
+        phone_number = body.phone_number
+        first_name = body.first_name
+        last_name = body.last_name
+        home_location = body.home_location
+        curr_location = body.curr_location
+        city = body.city
+
+    # Validate required fields
+    if not phone_number:
+        raise HTTPException(status_code=400, detail="phone_number is required")
+
+    # Check for duplicate phone number
+    exists = db.query(models.User).filter(models.User.phone_number == phone_number).first()
+    if exists:
+        raise HTTPException(status_code=400, detail="Phone number already registered.")
+
 
     user = models.User(
         phone_number=phone_number,
@@ -84,13 +132,13 @@ def add_dummy_locations():
 def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
 
-@app.post("/users")
-def create_user(email: str, name: str, db: Session = Depends(get_db)):
-    user = models.User(email=email, name=name)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-    return user
+# @app.post("/users")
+# def create_user(email: str, name: str, db: Session = Depends(get_db)):
+#     user = models.User(email=email, name=name)
+#     db.add(user)
+#     db.commit()
+#     db.refresh(user)
+#     return user
 
 
 
