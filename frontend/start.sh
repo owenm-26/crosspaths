@@ -15,7 +15,7 @@ echo "EXPO_PUBLIC_API_URL=http://$LOCAL_IP:8000" >> "$ENV_FILE"
 
 # Start frontend
 echo "📱 Starting Expo frontend..."
-npx expo run:ios &
+npx expo start -c &
 FRONTEND_PID=$!
 
 echo ""

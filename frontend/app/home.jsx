@@ -10,19 +10,63 @@ export default function HomeScreen() {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-6">
-      <Text className="text-3xl font-bold mb-6">Welcome to CrossPaths!</Text>
-      <Text className="text-gray-600 text-lg text-center mb-10">
-        This is a placeholder page until Milestone 3.
-      </Text>
+    <View
+  style={{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingHorizontal: 24, // px-6
+  }}
+>
+  <Text
+    style={{
+      fontSize: 30, // text-3xl
+      fontWeight: "bold",
+      marginBottom: 24, // mb-6
+    }}
+  >
+    Welcome to CrossPaths!
+  </Text>
 
-      <TouchableOpacity
-        onPress={handleLogout}
-        className="bg-red-500 px-6 py-3 rounded-xl shadow"
-      >
-        <Text className="text-white text-lg font-semibold">Logout</Text>
-      </TouchableOpacity>
-    </View>
+  <Text
+    style={{
+      color: "#4B5563", // text-gray-600
+      fontSize: 18, // text-lg
+      textAlign: "center",
+      marginBottom: 40, // mb-10
+    }}
+  >
+    This is a placeholder page until Milestone 3.
+  </Text>
+
+  <TouchableOpacity
+    onPress={handleLogout}
+    style={{
+      backgroundColor: "#EF4444", // bg-red-500
+      paddingHorizontal: 24, // px-6
+      paddingVertical: 12, // py-3
+      borderRadius: 20, // rounded-xl
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5, // for Android shadow
+    }}
+  >
+    <Text
+      style={{
+        color: "white",
+        fontSize: 18, // text-lg
+        fontWeight: "600", // font-semibold
+        textAlign: "center",
+      }}
+    >
+      Logout
+    </Text>
+  </TouchableOpacity>
+</View>
+
   );
 }
 
