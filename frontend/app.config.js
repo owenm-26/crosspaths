@@ -18,11 +18,16 @@ export default {
     
     ios: {
       supportsTablet: true,
-      bundleIdentifier: "com.crosspaths.app"  // Add this
+      bundleIdentifier: "com.crosspaths.app", 
+      infoPlist: {
+        "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby users.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location in the background to provide continuous tracking.",
+        "NSLocationAlwaysUsageDescription": "This app needs your location in the background."
+      }
     },
     
     android: {
-      package: "com.crosspaths.app",  // Add this
+      package: "com.crosspaths.app", 
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/images/android-icon-foreground.png",

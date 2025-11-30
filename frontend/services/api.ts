@@ -1,6 +1,4 @@
 import axios from 'axios';
-import {LoginPayload, User} from '../../types/login'
-
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -13,16 +11,6 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
-// ----- registration api -----
-export const registerUser = async (data: any) => {
-  return api.post("/users", data)
-};
-
-export const loginUser = async (data: LoginPayload) => {
-  const res = await api.post("/login", data);
-  return res.data;
-};
 
 // export axios instance for other future requests
 export default api;
