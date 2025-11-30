@@ -1,10 +1,12 @@
 from sqlalchemy import String, DateTime, Float, func, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from .db import Base
-
+from security.password import Password
+from security.hashing import PasswordHash
 class User(Base):
     __tablename__ = "users"
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     phone_number: Mapped[str] = mapped_column(String, primary_key=True, index=True)
     # email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String, nullable=False)
@@ -13,6 +15,13 @@ class User(Base):
     curr_location: Mapped[str] = mapped_column(String, nullable=False)
     city: Mapped[str] = mapped_column(String, nullable=False)
     notif_enabled: Mapped[float] = mapped_column(Float, nullable=False, server_default = "0")
+    password: Mapped[PasswordHash] = mapped_column(Password(), nullable=False)
+
+
+    @validates("password")
+    def _validate_password(self, key, password):
+        column = getattr(type(self), key)
+        return column.type.validator(password)
     
     # Relationship to friendships where *this user* is user_id
     friendships: Mapped[list["Friend"]] = relationship(

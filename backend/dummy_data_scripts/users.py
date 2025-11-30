@@ -2,6 +2,9 @@ import requests
 import random
 import os
 from dotenv import load_dotenv
+import string
+import requests
+
 
 load_dotenv()
 
@@ -50,6 +53,7 @@ def create_dummy_users(count: int = 100):
         city, (lat, lng) = random.choice(CITIES)
         first = random.choice(FIRST_NAMES)
         last = random.choice(LAST_NAMES)
+        password = random_password()
 
         payload = {
             "phone_number": random_phone(),
@@ -58,6 +62,7 @@ def create_dummy_users(count: int = 100):
             "home_location": f"({lat}, {lng})",
             "curr_location": f"({lat}, {lng})",
             "city": city,
+            "password": password,
         }
 
         r = requests.post(f"{BASE_URL}/users", params=payload)
@@ -77,6 +82,17 @@ def get_all_phone_numbers():
 
     return [u["phone_number"] for u in r.json()]
 
+def random_password(min_len=8, max_len=16):
+    """Generate a random password with variable length."""
+    length = random.randint(min_len, max_len)
+
+    chars = (
+        string.ascii_letters +
+        string.digits +
+        "!@#$%^&*()-_=+[]{}<>?"
+    )
+
+    return ''.join(random.choice(chars) for _ in range(length))
 
 # -----------------------------------------
 # FRIEND RELATIONSHIPS

@@ -12,7 +12,9 @@ load_dotenv()
 
 SECRET_KEY = os.environ.get("SECRET_JWT_PASSWORD")
 ALGORITHM = "HS256"
-assert SECRET_KEY != None
+
+# Temporary
+# assert SECRET_KEY != None
 
 router = APIRouter()
 
