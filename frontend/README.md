@@ -15,6 +15,11 @@ Edited by Owen
    ./start.sh
    ```
 
+   ```bash
+   # in a separate terminal run this after
+   npx expo run:ios
+   ```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
