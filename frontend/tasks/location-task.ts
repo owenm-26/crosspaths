@@ -14,10 +14,15 @@ interface LocationTaskData {
 export const LOCATION_TASK = "background-location-task";
 
 TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
-  if (error) return;
+  if (error) {
+    console.error(`Error in defining task: ${error}`)
+  };
 
   const { locations } = data as LocationTaskData;
-  if (!locations || locations.length === 0) return;
+  if (!locations || locations.length === 0) {
+    console.log("Locations inputted is of length 0")
+    return
+  };
 
   const { latitude, longitude } = locations[0].coords;
 
@@ -27,6 +32,7 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
   const token = await SecureStore.getItemAsync("token");
 
   try {
+    console.log("Sending API request from location-task")
     await fetch(`${API_URL}/api/location/update`, {
       method: "POST",
       headers: {
@@ -38,4 +44,6 @@ TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
   } catch (err) {
     console.log("Background task network error:", err);
   }
+
+  console.log("Updated User Location")
 });
