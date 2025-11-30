@@ -20,12 +20,60 @@ export default {
       supportsTablet: true,
       bundleIdentifier: "com.crosspaths.app", 
       infoPlist: {
+        NSAllowsArbitraryLoads: true,
+        UIBackgroundModes: [
+          "location",
+          "fetch",
+          "remote-notification"
+        ],
         "NSLocationWhenInUseUsageDescription": "This app needs access to your location to show nearby users.",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "This app needs access to your location in the background to provide continuous tracking.",
         "NSLocationAlwaysUsageDescription": "This app needs your location in the background."
       }
     },
-    
+    "plugins": [
+      "expo-localization",
+      "expo-background-fetch",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 33,
+            "targetSdkVersion": 33,
+            "buildToolsVersion": "33.0.0"
+          },
+          "ios": {
+            "deploymentTarget": "14.0"
+          }
+        }
+      ],
+      [
+        "expo-task-manager",
+        {
+          "ios": {
+            "minimumOSVersion": "14"
+          }
+        }
+      ],
+      [
+        "expo-background-fetch",
+        {
+          "ios": {
+            "minimumOSVersion": "14"
+          }
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "locationAlwaysPermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ],
     android: {
       package: "com.crosspaths.app", 
       adaptiveIcon: {
@@ -45,6 +93,7 @@ export default {
     
     plugins: [
       "expo-router",
+      "expo-secure-store",
       [
         "expo-splash-screen",
         {

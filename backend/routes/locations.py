@@ -8,8 +8,8 @@ from pydantic import BaseModel
 router = APIRouter()
 
 class LocationUpdate(BaseModel):
-    lat: int
-    lon: int
+    lat: float
+    lon: float
 
 @router.post("/locations")
 def create_locations(zipcode: str, city: str, state: str):

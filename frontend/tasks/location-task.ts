@@ -1,8 +1,7 @@
 import * as TaskManager from "expo-task-manager";
-import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
-export const LOCATION_TASK = "background-location-task";
-
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 interface LocationTaskData {
   locations: {
     coords: {
@@ -12,16 +11,31 @@ interface LocationTaskData {
   }[];
 }
 
+export const LOCATION_TASK = "background-location-task";
+
 TaskManager.defineTask(LOCATION_TASK, async ({ data, error }) => {
   if (error) return;
 
   const { locations } = data as LocationTaskData;
+  if (!locations || locations.length === 0) return;
+
   const { latitude, longitude } = locations[0].coords;
 
-  // Make coarse location
   const lat = Math.round(latitude * 10) / 10;
   const lon = Math.round(longitude * 10) / 10;
 
-  // Send to backend
-  await axios.post("/api/location/update", { lat, lon });
+  const token = await SecureStore.getItemAsync("token");
+
+  try {
+    await fetch(`${API_URL}/api/location/update`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ lat, lon }),
+    });
+  } catch (err) {
+    console.log("Background task network error:", err);
+  }
 });
