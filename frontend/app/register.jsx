@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
-import { registerUser } from "../services/api";
-import users from "../data/mock_users.json"
+import { registerUser } from "@/services/auth";
 
 export default function RegisterScreen() {
   const router = useRouter();

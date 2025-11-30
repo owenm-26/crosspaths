@@ -1,5 +1,3 @@
-# dummy_data_scripts/users.py
-
 import requests
 import random
 import os

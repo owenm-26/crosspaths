@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { loginUser } from "@/services/api";
+import { loginUser } from "@/services/auth";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -28,6 +28,7 @@ export default function LoginScreen() {
     router.replace("/home");
   } 
   catch (err) {
+    console.error(err)
     if (err.response?.data?.detail) {
       setError(err.response.data.detail);
     } else {
