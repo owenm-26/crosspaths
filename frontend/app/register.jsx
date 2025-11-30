@@ -59,89 +59,186 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white px-8 py-10">
-      <Text className="text-3xl font-bold text-center mb-8">
-        Create Account
+    <ScrollView
+  style={{
+    flex: 1,
+    backgroundColor: "white",
+    paddingHorizontal: 32, // px-8
+    paddingVertical: 40,   // py-10
+  }}
+>
+  <Text
+    style={{
+      fontSize: 30, // text-3xl
+      fontWeight: "bold",
+      textAlign: "center",
+      marginBottom: 32, // mb-8
+    }}
+  >
+    Create Account
+  </Text>
+
+  <View
+    style={{
+      backgroundColor: "#F9FAFB", // bg-gray-50
+      padding: 24, // p-6
+      borderRadius: 24, // rounded-2xl
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 5, // Android shadow
+    }}
+  >
+    <TextInput
+      placeholder="First Name"
+      value={firstName}
+      onChangeText={setFirstName}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB", // border-gray-300
+        backgroundColor: "white",
+        padding: 16, // p-4
+        borderRadius: 20, // rounded-xl
+        marginBottom: 16, // mb-4
+      }}
+    />
+
+    <TextInput
+      placeholder="Last Name"
+      value={lastName}
+      onChangeText={setLastName}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    <TextInput
+      placeholder="Home Base City"
+      value={homeBaseCity}
+      onChangeText={setHomeBaseCity}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    <TextInput
+      placeholder="Home Base Country"
+      value={homeBaseCountry}
+      onChangeText={setHomeBaseCountry}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    <TextInput
+      placeholder="Phone Number (10 digits)"
+      keyboardType="number-pad"
+      value={phone}
+      onChangeText={setPhone}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    <TextInput
+      placeholder="Password"
+      secureTextEntry
+      value={password}
+      onChangeText={setPassword}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    <TextInput
+      placeholder="Confirm Password"
+      secureTextEntry
+      value={confirm}
+      onChangeText={setConfirm}
+      style={{
+        borderWidth: 1,
+        borderColor: "#D1D5DB",
+        backgroundColor: "white",
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+      }}
+    />
+
+    {/* Error message */}
+    {error !== "" && (
+      <Text
+        style={{
+          color: "#EF4444", // text-red-500
+          textAlign: "center",
+          marginBottom: 16, // mb-4
+        }}
+      >
+        {error}
       </Text>
+    )}
 
-      <View className="bg-gray-50 p-6 rounded-2xl shadow-md">
+    <TouchableOpacity
+      onPress={handleRegister}
+      style={{
+        backgroundColor: "#16A34A", // bg-green-600
+        paddingVertical: 12, // py-3
+        borderRadius: 20, // rounded-xl
+      }}
+    >
+      <Text
+        style={{
+          textAlign: "center",
+          color: "white",
+          fontSize: 18, // text-lg
+          fontWeight: "600",
+        }}
+      >
+        Sign Up
+      </Text>
+    </TouchableOpacity>
 
-        <TextInput
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Home Base City"
-          value={homeBaseCity}
-          onChangeText={setHomeBaseCity}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Home Base Country"
-          value={homeBaseCountry}
-          onChangeText={setHomeBaseCountry}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Phone Number (10 digits)"
-          keyboardType="number-pad"
-          value={phone}
-          onChangeText={setPhone}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        <TextInput
-          placeholder="Confirm Password"
-          secureTextEntry
-          value={confirm}
-          onChangeText={setConfirm}
-          className="border bg-white border-gray-300 p-4 rounded-xl mb-4"
-        />
-
-        {/* Error message in red */}
-        {error !== "" && (
-          <Text className="text-red-500 text-center mb-4">{error}</Text>
-        )}
-
-        <TouchableOpacity
-          className="bg-green-600 py-3 rounded-xl"
-          onPress={handleRegister}
-        >
-          <Text className="text-center text-white text-lg font-semibold">
-            Sign Up
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          className="mt-6"
-          onPress={() => router.push("/login")}
-        >
-          <Text className="text-center text-blue-600 font-medium">
-            Already have an account? Log In
-          </Text>
-        </TouchableOpacity>
-
-      </View>
-    </ScrollView>
+    <TouchableOpacity
+      onPress={() => router.push("/login")}
+      style={{ marginTop: 24 }} // mt-6
+    >
+      <Text
+        style={{
+          textAlign: "center",
+          color: "#2563EB", // text-blue-600
+          fontWeight: "500", // font-medium
+        }}
+      >
+        Already have an account? Log In
+      </Text>
+    </TouchableOpacity>
+  </View>
+</ScrollView>
   );
 }
