@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from db.models import User
 from dummy_data_scripts import users, location
 
+
 router = APIRouter()
 
 @router.get("/dummy/users")
@@ -32,3 +33,4 @@ def add_dummy_inbox_notifications():
 def add_dummy_locations():
     res = location.create_dummy_location()
     return {"message": res}
+
