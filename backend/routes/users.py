@@ -14,6 +14,7 @@ class UserCreate(BaseModel):
     home_location: str
     curr_location: str
     city: str
+    password: str
 
 @router.post("/users")
 def create_user(
@@ -23,8 +24,10 @@ def create_user(
     home_location: Optional[str] = None,
     curr_location: Optional[str] = None,
     city: Optional[str] = None,
+    password: Optional[str] = None,
     body: Optional[UserCreate] = Body(None),
     db: Session = Depends(get_db)
+
 ):
     """
     This matches your new User schema.
@@ -38,6 +41,8 @@ def create_user(
         home_location = body.home_location
         curr_location = body.curr_location
         city = body.city
+        password = body.password
+
 
     # Validate required fields
     if not phone_number:
@@ -66,3 +71,4 @@ def create_user(
 @router.get("/users")
 def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
+

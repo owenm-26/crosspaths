@@ -10,16 +10,23 @@ Base = declarative_base()
 load_dotenv()
 
 def db_connect():
-    
-    username = os.environ.get("DATABASE_USERNAME")
-    password = os.environ.get("DATABASE_PASSWORD")
-    dbname = os.environ.get("DATABASE_NAME")
-    port = os.environ.get("DATABASE_PORT")
-    host = os.environ.get("DATABASE_HOST")
-    engine = create_engine(f"{dbname}://{host}:{password}@aws-1-us-east-2.pooler.supabase.com:{port}/{username}", echo=True)
-    connection = engine.connect()
+    # Construct the SQLAlchemy connection string
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
-    return engine, connection
+    # Create the SQLAlchemy engine
+    engine = create_engine(DATABASE_URL)
+    # If using Transaction Pooler or Session Pooler, we want to ensure we disable SQLAlchemy client side pooling -
+    # https://docs.sqlalchemy.org/en/20/core/pooling.html#switching-pool-implementations
+    # engine = create_engine(DATABASE_URL, poolclass=NullPool)
+
+    # Test the connection
+    try:
+        with engine.connect() as connection:
+            print("Connection successful!")
+    except Exception as e:
+        print(f"Failed to connect: {e}")
+    
+    return engine
 
 def create_tables_orm(engine):
     Base.metadata.drop_all(engine, checkfirst=True)
@@ -31,6 +38,7 @@ def create_session(engine):
 
     return session
 
+
 # Dependency to get a DB session
 def get_db():
     # try:
@@ -38,5 +46,5 @@ def get_db():
     # finally:
         # db_session.close()
 
-engine, connection = db_connect()
+engine = db_connect()
 db_session: Session = create_session(engine=engine)
