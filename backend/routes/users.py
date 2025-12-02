@@ -60,6 +60,7 @@ def create_user(
         last_name=last_name,
         home_location=home_location,
         curr_location=curr_location,
+        password=password,
         city=city
     )
 
