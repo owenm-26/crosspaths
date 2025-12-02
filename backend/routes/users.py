@@ -25,6 +25,7 @@ def create_user(
     city: Optional[str] = None,
     body: Optional[UserCreate] = Body(None),
     db: Session = Depends(get_db)
+    
 ):
     """
     This matches your new User schema.

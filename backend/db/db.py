@@ -10,17 +10,8 @@ Base = declarative_base()
 load_dotenv()
 
 def db_connect():
-
-
-
-    USER = os.getenv("user")
-    PASSWORD = os.getenv("password")
-    HOST = os.getenv("host")
-    PORT = os.getenv("port")
-    DBNAME = os.getenv("dbname")
-
     # Construct the SQLAlchemy connection string
-    DATABASE_URL = f"postgresql+psycopg2://{USER}:{PASSWORD}@{HOST}:{PORT}/{DBNAME}?sslmode=require"
+    DATABASE_URL = os.getenv("DATABASE_URL")
 
     # Create the SQLAlchemy engine
     engine = create_engine(DATABASE_URL)
@@ -35,16 +26,7 @@ def db_connect():
     except Exception as e:
         print(f"Failed to connect: {e}")
     
-    # username = os.environ.get("DATABASE_USERNAME")
-    # password = os.environ.get("DATABASE_PASSWORD")
-    # dbname = os.environ.get("DATABASE_NAME")
-    # port = os.environ.get("DATABASE_PORT")
-    # host = os.environ.get("HOST")
-    # DATABASE_URL = f"postgresql+psycopg2://{username}:{password}@{host}:{port}/{dbname}?sslmode=require"
-    # engine = create_engine(DATABASE_URL)
-    connection = engine.connect()
-
-    return engine, connection
+    return engine
 
 def create_tables_orm(engine):
     Base.metadata.drop_all(engine, checkfirst=True)
@@ -63,5 +45,5 @@ def get_db():
     # finally:
         # db_session.close()
 
-engine, connection = db_connect()
+engine = db_connect()
 db_session: Session = create_session(engine=engine)

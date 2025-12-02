@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_URL = os.environ.get("BASE_URL")
-CSV_FILE = os.environ.get("CSV_NAME")
+CSV_FILE = "/Users/aditya/Desktop/Fall 2025/CS 599/crosspaths/backend/dummy_data_scripts/uscities.csv"
 def create_dummy_location(csv_file=CSV_FILE):
     # Load the CSV
     df = pd.read_csv(csv_file)
