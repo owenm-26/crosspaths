@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "@/services/auth";
-import useAuth from "./hooks/useAuth";
+import useAuth from "./hooks/AuthContext";
 
 export default function RegisterScreen() {
   const router = useRouter();

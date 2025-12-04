@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../(screens)/HomeScreen';
-import FriendMakingScreen from '../(screens)/FriendMakingScreen';
-import InboxScreen from '../(screens)/InboxScreen';
+import HomeScreen from '../(tabs)/home';
+import FriendMakingScreen from '../(tabs)/addFriends';
+import InboxScreen from '../(tabs)/inbox';
 
 const Tab = createBottomTabNavigator();
 

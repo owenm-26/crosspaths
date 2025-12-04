@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import useAuth from "./hooks/useAuth"
+import useAuth from "./hooks/AuthContext"
 
 export default function HomeScreen() {
   const router = useRouter();

@@ -5,6 +5,7 @@ import * as TaskManager from "expo-task-manager";
 import { LOCATION_TASK } from "../tasks/location-task";
 import { Platform, Alert } from "react-native";
 import {checkTasks} from  "../tasks/utility"
+import { AuthProvider } from "./hooks/AuthContext";
 
 export default function RootLayout() {
 
@@ -40,5 +41,7 @@ export default function RootLayout() {
     // checkTasks();
   }, []);
 
-  return <Stack />;
+  return  (<AuthProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </AuthProvider>);
 }
