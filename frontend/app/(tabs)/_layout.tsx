@@ -1,6 +1,7 @@
 import { Tabs, useRouter } from "expo-router";
 import useAuth from "../hooks/AuthContext";
 import { TouchableOpacity, Text } from "react-native";
+import { useEffect } from "react";
 
 export default function TabsLayout() {
   const router = useRouter();
@@ -10,9 +11,13 @@ export default function TabsLayout() {
     setUser(null);
   };
 
+  useEffect(() => {
+    if (!user) {
+      router.replace("/login");
+    }
+  }, [user]);
+
   if (!user) {
-    // Redirect if not logged in
-    router.replace("/login");
     return null;
   }
 
