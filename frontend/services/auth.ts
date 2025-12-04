@@ -2,8 +2,14 @@ import api from "./api";
 import {LoginPayload, User} from '../../types/login'
 import { UserInfo } from "@/app/hooks/AuthContext";
 
-export const registerUser = async (data: any) => {
-  return api.post("/users", data)
+export const registerUser = async (data: any):Promise<UserInfo | null> => {
+  const res:any = await api.post("/users", data)
+  const user: UserInfo = {first_name: res.data.user.first_name, 
+                          last_name: res.data.user.last_name, 
+                          phone_number: res.data.user.phone_number, 
+                          token: res.data.token,
+                        }
+  return user;
 };
 
 export const loginUser = async (data: LoginPayload):Promise<UserInfo | null> =>  {

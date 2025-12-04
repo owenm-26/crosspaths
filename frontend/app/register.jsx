@@ -46,10 +46,9 @@ export default function RegisterScreen() {
     try {
       // try creating user in backend DB
       const res = await registerUser(payload);
-
       Alert.alert("Success", "Account created!");
       setUser(res)
-      router.replace("/home");
+      router.replace("/(tabs)/home");
     } catch (err) {
       console.log("❌ Registration error:", err);
       console.log("❌ Backend response:", err?.response?.data);

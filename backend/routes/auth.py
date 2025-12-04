@@ -16,6 +16,14 @@ assert SECRET_KEY != None
 
 router = APIRouter()
 
+def create_jwt(user: User) ->dict:
+     # Create JWT token
+    token_data = {
+        "user_id": user.phone_number,
+        "exp": datetime.now(timezone.utc) + timedelta(days=7)  # token expires in 7 days
+    }
+    return jwt.encode(payload=token_data, key=SECRET_KEY, algorithm=ALGORITHM)
+
 class LoginPayload(BaseModel):
     phone_number: str
     password: str
@@ -27,11 +35,7 @@ def login(payload: LoginPayload, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
     # Create JWT token
-    token_data = {
-        "user_id": user.phone_number,
-        "exp": datetime.now(timezone.utc) + timedelta(days=7)  # token expires in 7 days
-    }
-    token = jwt.encode(payload=token_data, key=SECRET_KEY, algorithm=ALGORITHM)
+    token = create_jwt(user=user)
 
     return {
         "message": "Login successful",
