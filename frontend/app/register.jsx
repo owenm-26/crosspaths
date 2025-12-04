@@ -2,9 +2,11 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "@/services/auth";
+import useAuth from "./hooks/useAuth";
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const {user, setUser} = useAuth();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -46,6 +48,7 @@ export default function RegisterScreen() {
       const res = await registerUser(payload);
 
       Alert.alert("Success", "Account created!");
+      setUser(res)
       router.replace("/home");
     } catch (err) {
       console.log("❌ Registration error:", err);

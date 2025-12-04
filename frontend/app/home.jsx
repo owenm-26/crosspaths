@@ -1,11 +1,14 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
+import useAuth from "./hooks/useAuth"
 
 export default function HomeScreen() {
   const router = useRouter();
+  const {user, setUser} = useAuth();
 
   const handleLogout = () => {
     // In mock phase: just navigate back to login
+    setUser(null)
     router.replace("/login");
   };
 
