@@ -1,19 +1,44 @@
-import { Redirect, Tabs } from "expo-router";
-import useAuth  from "../hooks/AuthContext";
+import { Tabs, useRouter } from "expo-router";
+import useAuth from "../hooks/AuthContext";
+import { TouchableOpacity, Text } from "react-native";
 
 export default function TabsLayout() {
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, setUser } = useAuth();
 
-  // If NOT logged in → redirect to login
+  const handleLogout = () => {
+    setUser(null);
+  };
+
   if (!user) {
-    console.log(`Not logged in, redirecting. + ${user}`)
-    return <Redirect href="/login" />;
+    // Redirect if not logged in
+    router.replace("/login");
+    return null;
   }
 
-  // If logged in → show the tabs
-  return <Tabs screenOptions={{ headerShown: false }}>
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: true,
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={handleLogout}
+            style={{
+              backgroundColor: "#EF4444",
+              paddingHorizontal: 12,
+              paddingVertical: 6,
+              borderRadius: 6,
+              marginRight: 12,
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "600" }}>Logout</Text>
+          </TouchableOpacity>
+        ),
+      }}
+    >
       <Tabs.Screen name="home" options={{ title: "Home" }} />
-      <Tabs.Screen name="addFriends" options={{ title: "Add New Friends" }} />
+      <Tabs.Screen name="addFriends" options={{ title: "Add Friends" }} />
       <Tabs.Screen name="inbox" options={{ title: "Inbox" }} />
-    </Tabs>;
+    </Tabs>
+  );
 }

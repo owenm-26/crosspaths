@@ -43,31 +43,7 @@ export default function HomeScreen() {
     This is a placeholder page until Milestone 3.
   </Text>
 
-  <TouchableOpacity
-    onPress={handleLogout}
-    style={{
-      backgroundColor: "#EF4444", // bg-red-500
-      paddingHorizontal: 24, // px-6
-      paddingVertical: 12, // py-3
-      borderRadius: 20, // rounded-xl
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-      elevation: 5, // for Android shadow
-    }}
-  >
-    <Text
-      style={{
-        color: "white",
-        fontSize: 18, // text-lg
-        fontWeight: "600", // font-semibold
-        textAlign: "center",
-      }}
-    >
-      Logout
-    </Text>
-  </TouchableOpacity>
+  
 </View>
 
   );
