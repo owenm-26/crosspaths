@@ -2,8 +2,11 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { loginUser } from "@/services/auth";
+import useAuth from "./hooks/AuthContext";
+import {UserInfo} from "./hooks/AuthContext"
 
 export default function LoginScreen() {
+  const {user, setUser} = useAuth();
   const router = useRouter();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -24,8 +27,8 @@ export default function LoginScreen() {
     });
 
     console.log("Logged in:", response);
-
-    router.replace("/home");
+    setUser(response)
+    router.replace("/(tabs)/home");
   } 
   catch (err) {
     console.error(err)

@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from db.db import get_db
 from db import models
 from typing import Optional
+from .auth import create_jwt
 
 router = APIRouter()
 
@@ -67,7 +68,12 @@ def create_user(
     db.add(user)
     db.commit()
     db.refresh(user)
-    return user
+
+    token = create_jwt(user=user)
+    
+    return {"message": "Registration successful",
+        "token": token,
+        "user": user}
 
 @router.get("/users")
 def get_users(db: Session = Depends(get_db)):

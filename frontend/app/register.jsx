@@ -2,9 +2,11 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "@/services/auth";
+import useAuth from "./hooks/AuthContext";
 
 export default function RegisterScreen() {
   const router = useRouter();
+  const {user, setUser} = useAuth();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -44,9 +46,9 @@ export default function RegisterScreen() {
     try {
       // try creating user in backend DB
       const res = await registerUser(payload);
-
       Alert.alert("Success", "Account created!");
-      router.replace("/home");
+      setUser(res)
+      router.replace("/(tabs)/home");
     } catch (err) {
       console.log("❌ Registration error:", err);
       console.log("❌ Backend response:", err?.response?.data);
