@@ -37,6 +37,7 @@ export default function RegisterScreen() {
       last_name: lastName,
       home_location: `${homeBaseCity}, ${homeBaseCountry}`,
       curr_location: `${homeBaseCity}, ${homeBaseCountry}`, // placeholder until GPS
+      password: password,
       city: homeBaseCity,
     }
 
