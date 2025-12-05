@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { registerUser } from "@/services/auth";
@@ -38,7 +38,6 @@ export default function RegisterScreen() {
       first_name: firstName,
       last_name: lastName,
       home_location: `${homeBaseCity}, ${homeBaseCountry}`,
-      curr_location: `${homeBaseCity}, ${homeBaseCountry}`, // placeholder until GPS
       password: password,
       city: homeBaseCity,
     }

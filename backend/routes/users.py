@@ -13,7 +13,6 @@ class UserCreate(BaseModel):
     first_name: str
     last_name: str
     home_location: str
-    curr_location: str
     city: str
     password: str
 
@@ -39,8 +38,7 @@ def create_user(
         phone_number = body.phone_number
         first_name = body.first_name
         last_name = body.last_name
-        home_location = body.home_location
-        curr_location = body.curr_location
+        home_location= body.home_location
         city = body.city
         password = body.password
 

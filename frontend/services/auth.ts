@@ -1,5 +1,5 @@
 import api from "./api";
-import {LoginPayload, User} from '../../types/login'
+import {LoginPayload, User} from '../types/login'
 import { UserInfo } from "@/app/hooks/AuthContext";
 
 export const registerUser = async (data: any):Promise<UserInfo | null> => {
