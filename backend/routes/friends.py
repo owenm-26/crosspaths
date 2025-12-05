@@ -39,6 +39,9 @@ def get_friend_distances(user_phone: str, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
+    if not user.curr_location or user.curr_location[0] != "(" or user.curr_location[-1] != ")":
+        print(f"User's curr_location is malformed: {user.curr_location}")
+        return []
     # Query the user's friends
     friends = (
         db.query(models.User)
