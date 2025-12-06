@@ -77,3 +77,12 @@ def create_user(
 def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
 
+@router.get("/user/by-phone/{phone_number}")
+def get_user_by_phone(phone_number: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.phone_number == phone_number).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return user
+
+
