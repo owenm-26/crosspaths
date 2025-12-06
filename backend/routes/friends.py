@@ -127,7 +127,14 @@ def get_user_by_phone(req_phone_number: str, subj_phone_number: str, db: Session
     (models.Friend.friend_phone == u2))
         .first()
     ) != None
-    return {"user": friend_user, "is_friend_already": is_friend_already}
+
+    already_pending_friend = (
+        db.query(models.FriendRequest)
+        .filter((models.FriendRequest.from_phone == u1) & 
+        (models.FriendRequest.to_phone == u2))
+        .first()
+    ) != None
+    return {"user": friend_user, "is_friend_already": is_friend_already, "already_pending_friend": already_pending_friend}
 
 @router.delete("/remove-friend/by-phone/{req_phone_number}/{subj_phone_number}")
 def remove_friendship(req_phone_number: str, subj_phone_number: str, db: Session = Depends(get_db)):

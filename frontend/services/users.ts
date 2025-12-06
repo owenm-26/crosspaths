@@ -8,7 +8,8 @@ export const getUserBasicsById = async (user_phone_number:string, subj_phone_num
     const user: UserBasics = {first_name: res.data.user.first_name, 
                             last_name: res.data.user.last_name, 
                             phone_number: res.data.user.phone_number, 
-                            is_already_friend: res.data.is_friend_already
+                            is_already_friend: res.data.is_friend_already,
+                            already_pending_friend: res.data.already_pending_friend
                             }
     return user;
 };

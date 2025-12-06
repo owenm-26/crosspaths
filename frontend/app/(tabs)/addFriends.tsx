@@ -50,17 +50,19 @@ export default function AddFriends() {
 
   const sendFriendshipUpdate = async () => {
     if (!result || !user) return
-    console.log(`Sending friendship update from ${user.phone_number} to ${result.phone_number}. New friendship? ${!result.is_already_friend}`)
-    let res;
-    if (!result.is_already_friend){
-      res = await sendFriendRequest(user.phone_number, result.phone_number)
-      // m = `Sent Friendship invite to ${result?.phone_number}!`
-    }else{
-      res = await deleteFriend(user.phone_number, result.phone_number)
-      // m = `Removed bidirectional friendship with ${result?.phone_number}.`
+    let message = "";
+
+    if (result.already_pending_friend) {
+      message = `Invite to ${result.first_name} ${result.last_name} is pending their acceptance`;
+    } else if (!result.is_already_friend) {
+      const res = await sendFriendRequest(user.phone_number, result.phone_number);
+      message = res?.data.message || `Sent friendship invite to ${result.first_name}!`;
+    } else {
+      const res = await deleteFriend(user.phone_number, result.phone_number);
+      message = res?.data.message || `Removed friendship with ${result.first_name}.`;
     }
 
-    setSentMessage(res.message)
+    setSentMessage(message)
     setPhone("")
     setResult(null)
     setTimeout(() => setSentMessage(""), 3000);
@@ -72,13 +74,13 @@ export default function AddFriends() {
       {sentMessage ? (
         <View
           style={{
-            backgroundColor: "#D1FAE5",
+            backgroundColor: "#d1dbfaff",
             padding: 10,
             borderRadius: 8,
             marginBottom: 10,
           }}
         >
-          <Text style={{ color: "#065F46", textAlign: "center", fontWeight: "600" }}>
+          <Text style={{ color: "black", textAlign: "center", fontWeight: "600" }}>
             {sentMessage}
           </Text>
         </View>
@@ -113,8 +115,8 @@ export default function AddFriends() {
             </Text>
           </View>
           <Text style={styles.phone}>{result.phone_number}</Text>
-          <TouchableOpacity onPress={sendFriendshipUpdate} style={[styles.button, result.is_already_friend && { backgroundColor: "#EF4444" }]}>
-            <Text style={styles.buttonText}>{result.is_already_friend ? "Remove" : "Invite"}</Text>
+          <TouchableOpacity onPress={sendFriendshipUpdate} style={[styles.button, result.is_already_friend && { backgroundColor: "#EF4444" }, result.already_pending_friend && { backgroundColor: "#ef8644ff" }]}>
+            <Text style={styles.buttonText}>{result.is_already_friend ? "Remove" : result.already_pending_friend ? "Pending" : "Invite"}</Text>
           </TouchableOpacity>
         </View>
       )}
