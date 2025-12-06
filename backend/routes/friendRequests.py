@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from db.db import get_db
 from db import models
 import pydantic 
@@ -30,7 +30,25 @@ def get_friend_requests(db: Session = Depends(get_db)):
 @router.get("/friend_requests/user")
 def get_friend_requests_by_phone(user=Depends(get_current_user), db: Session = Depends(get_db)):
     friend_requests = (
-        db.query(models.FriendRequest).filter(models.FriendRequest.to_phone == user.phone_number).all()
+        db.query(models.FriendRequest)
+        .options(joinedload(models.FriendRequest.user))  # eager load the 'user' relationship
+        .filter(
+            models.FriendRequest.to_phone == user.phone_number,
+            models.FriendRequest.accepted == 0  # Only pending requests
+        )
+        .all()
     )
 
-    return friend_requests
+
+    result = [
+        {
+            "from_phone": fr.from_phone,
+            "first_name": fr.user.first_name if fr.user else None,
+            "last_name": fr.user.last_name if fr.user else None
+        }
+        for fr in friend_requests
+    ]
+
+
+    return result
+

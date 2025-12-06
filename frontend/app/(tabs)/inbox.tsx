@@ -25,7 +25,7 @@ export default function Inbox() {
         const requests = await getPendingFriendRequests();
         const notifs = await getNotifications();
 
-        setPendingRequests(requests.data || []);
+        setPendingRequests(requests || []);
         setNotifications(notifs.data || []);
       } catch (err) {
         console.log("Inbox fetch error:", err);
@@ -46,6 +46,13 @@ export default function Inbox() {
     );
   }
 
+  const handleAcceptFriendRequest = async () =>{
+
+  }
+
+  const handleFriendRequestReject = async () =>{
+
+  }
   return (
     <View style={styles.container}>
       {/* Pending Friend Requests */}
@@ -62,12 +69,14 @@ export default function Inbox() {
               
               <View>
                 
-                <Text style={styles.name}>{item.from_name}</Text>
+                <Text style={styles.name}>{item.first_name} {item.last_name}</Text>
                 <Text style={styles.phone}>{item.from_phone}</Text>
               </View>
-              <TouchableOpacity style={styles.button}>
-                
+              <TouchableOpacity style={styles.button} onPress={handleAcceptFriendRequest}>
                 <Text style={styles.buttonText}>Accept</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.button, {backgroundColor: "#EF4444"}]} onPress={handleFriendRequestReject}>
+                <Text style={styles.buttonText}>Deny</Text>
               </TouchableOpacity>
             </View>
           )}

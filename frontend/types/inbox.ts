@@ -1,9 +1,7 @@
 export interface FriendRequest {
-  from_phone: string; // Who sent the request
-  to_phone: string; // Who will receive the request
-  accepted: boolean; // true if accepted, false otherwise
-  from_name: string; // Convenience field: sender's name for UI
-  to_name: string; // Convenience field: receiver's name for UI
+  from_phone: string; 
+  first_name: string; 
+  last_name: string; 
 }
 
 export interface Notification {
