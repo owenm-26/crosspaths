@@ -16,6 +16,8 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [sentMessage, setSentMessage] = useState<String>("")
+
 
   useEffect(() => {
     const fetchInbox = async () => {
@@ -40,21 +42,48 @@ export default function Inbox() {
   if (loading) {
     return (
       <View style={styles.center}>
-        
         <ActivityIndicator size="large" />
       </View>
     );
   }
 
-  const handleAcceptFriendRequest = async () =>{
+  const handleAcceptFriendRequest = async (request: FriendRequest) => {
+    if (!request) return;
 
-  }
+    setPendingRequests((prev) =>
+      prev.filter((item) => item.from_phone !== request.from_phone)
+    );
+    setSentMessage(`Added ${request.first_name} ${request.last_name} as a friend!`)
+    setTimeout(() => setSentMessage(""), 3000);
+  };
 
-  const handleFriendRequestReject = async () =>{
+  const handleFriendRequestReject = async (request: FriendRequest) => {
+    if (!request) return;
 
-  }
+    setPendingRequests((prev) =>
+      prev.filter((item) => item.from_phone !== request.from_phone)
+    );
+
+    setSentMessage(`Rejected ${request.first_name} ${request.last_name}'s request`)
+    setTimeout(() => setSentMessage(""), 3000);
+  };
+
   return (
     <View style={styles.container}>
+      {sentMessage ? (
+        <View
+          style={{
+            backgroundColor: "#d1dbfaff",
+            padding: 10,
+            borderRadius: 8,
+            marginBottom: 10,
+          }}
+        >
+          <Text style={{ color: "black", textAlign: "center", fontWeight: "600" }}>
+            {sentMessage}
+          </Text>
+        </View>
+      ) : null}
       {/* Pending Friend Requests */}
       <Text style={styles.sectionTitle}>Pending Friend Requests</Text>
       {pendingRequests.length === 0 ? (
@@ -66,16 +95,24 @@ export default function Inbox() {
           contentContainerStyle={{ paddingBottom: 20 }}
           renderItem={({ item }) => (
             <View style={styles.card}>
-              
               <View>
-                
-                <Text style={styles.name}>{item.first_name} {item.last_name}</Text>
+                <Text style={styles.name}>
+                  {item.first_name} {item.last_name}
+                </Text>
                 <Text style={styles.phone}>{item.from_phone}</Text>
               </View>
-              <TouchableOpacity style={styles.button} onPress={handleAcceptFriendRequest}>
+              <TouchableOpacity
+                style={styles.button}
+                key={`accept ${item.from_phone}`}
+                onPress={() => handleAcceptFriendRequest(item)}
+              >
                 <Text style={styles.buttonText}>Accept</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.button, {backgroundColor: "#EF4444"}]} onPress={handleFriendRequestReject}>
+              <TouchableOpacity
+                style={[styles.button, { backgroundColor: "#EF4444" }]}
+                key={`rejectt ${item.from_phone}`}
+                onPress={() => handleFriendRequestReject(item)}
+              >
                 <Text style={styles.buttonText}>Deny</Text>
               </TouchableOpacity>
             </View>
