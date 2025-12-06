@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { loginUser } from "@/services/auth";
 import useAuth from "./hooks/AuthContext";
 import {UserInfo} from "./hooks/AuthContext"
+import { requestLocationPermissions } from "@/tasks/location-task";
 
 export default function LoginScreen() {
   const {user, setUser} = useAuth();
@@ -13,31 +14,32 @@ export default function LoginScreen() {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-  setError("");
+      setError("");
 
-  if (!/^\d{10}$/.test(phone)) {
-    setError("Phone number must be 10 digits.");
-    return;
-  }
+      if (!/^\d{10}$/.test(phone)) {
+        setError("Phone number must be 10 digits.");
+        return;
+      }
 
-  try {
-    const response = await loginUser({
-      phone_number: phone,
-      password: password
-    });
+      try {
+        const response = await loginUser({
+          phone_number: phone,
+          password: password
+        });
 
-    console.log("Logged in:", response);
-    setUser(response)
-    router.replace("/(tabs)/home");
-  } 
-  catch (err) {
-    console.error(err)
-    if (err.response?.data?.detail) {
-      setError(err.response.data.detail);
-    } else {
-      setError("Something went wrong. Try again.");
-    }
-  }
+        console.log("Logged in:", response);
+        setUser(response)
+        await requestLocationPermissions()
+        router.replace("/(tabs)/home");
+      } 
+      catch (err) {
+        console.error(err)
+        if (err.response?.data?.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError("Something went wrong. Try again.");
+        }
+      }
 };
 
 
