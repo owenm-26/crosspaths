@@ -77,17 +77,7 @@ def create_user(
 def get_users(db: Session = Depends(get_db)):
     return db.query(models.User).all()
 
-@router.get("/user/by-phone/{req_phone_number}/{subj_phone_number}")
-def get_user_by_phone(req_phone_number: str, subj_phone_number: str, db: Session = Depends(get_db)):
-    friend_user = get_user(phone_number=subj_phone_number, db=db)
 
-    is_friend_already = (
-        db.query(models.Friend)
-        .filter((models.Friend.user_phone == req_phone_number) &
-    (models.Friend.friend_phone == subj_phone_number))
-        .all()
-    )
-    return {"user": friend_user, "is_friend_already": is_friend_already}
 
 def get_user(phone_number: str, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.phone_number == phone_number).first()
