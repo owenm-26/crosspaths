@@ -6,13 +6,9 @@ import geopy.distance
 from .users import get_user
 from typing import List
 from db.notification_codes import NotificationCode
-import pydantic
-
+from .friendRequests import take_action_on_friend_request_and_send_notification
+from interfaces.friendship import FriendshipPayload
 router = APIRouter()
-
-class FriendshipPayload(pydantic.BaseModel):
-    user_phone: str
-    friend_phone: str
 
 @router.post("/friends")
 def create_friendship(payload: FriendshipPayload, db: Session = Depends(get_db)):
@@ -37,22 +33,8 @@ def create_friendship(payload: FriendshipPayload, db: Session = Depends(get_db))
     if existing:
         return {"message": "Already friends"}
     
-    # delete friend request 
-    friend_reqs = (
-        db.query(models.FriendRequest)
-        .filter(
-            ((models.FriendRequest.from_phone == u1) & (models.FriendRequest.to_phone == u2))
-            | ((models.FriendRequest.from_phone == u2) & (models.FriendRequest.to_phone == u1))
-                ).all()
-    )
-    for req in friend_reqs:
-        db.delete(req)
-    # and create notification
-    notifs = []
-    for req in friend_reqs:
-        n = models.Inbox(notification=NotificationCode.FRIEND_ACCEPTED, from_phone=req.from_phone, to_phone=req.to_phone)
-        notifs.append(n)
-    db.add_all(notifs)
+    # delete friend request and create notifications
+    take_action_on_friend_request_and_send_notification(u1=u1, u2=u2, accept=True, db=db)
 
     f = models.Friend(user_phone=u1, friend_phone=u2)
     db.add(f)

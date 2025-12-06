@@ -10,7 +10,7 @@ import {
 import useAuth from "../hooks/AuthContext";
 import { getPendingFriendRequests, getNotifications } from "@/services/inbox";
 import { FriendRequest, Notification } from "@/types/inbox";
-import { acceptFriend } from "@/services/friendRequests";
+import { acceptFriend, rejectFriend } from "@/services/friendRequests";
 
 export default function Inbox() {
   const { user } = useAuth();
@@ -51,7 +51,7 @@ export default function Inbox() {
   const handleAcceptFriendRequest = async (request: FriendRequest) => {
     if (!request || !user) return;
 
-    const res = await acceptFriend(user?.phone_number, request);
+    const res = await acceptFriend(user.phone_number, request);
 
     if(res.status!=200){
       console.error(`Error: ${res}`)
@@ -65,7 +65,13 @@ export default function Inbox() {
   };
 
   const handleFriendRequestReject = async (request: FriendRequest) => {
-    if (!request) return;
+    if (!request || !user) return;
+
+    const res = await rejectFriend(user.phone_number, request);
+
+    if(res.status!=200){
+      console.error(`Error: ${res}`)
+    }
 
     setPendingRequests((prev) =>
       prev.filter((item) => item.from_phone !== request.from_phone)
