@@ -1,4 +1,4 @@
-from sqlalchemy import String, DateTime, Float, func, ForeignKey
+from sqlalchemy import String, DateTime, Float, func, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from security.password import Password
 from security.hashing import PasswordHash
@@ -130,7 +130,7 @@ class Inbox(Base):
 
     __tablename__="inbox"
 
-    notification: Mapped[float] = mapped_column(Float, primary_key=True)
+    notification: Mapped[int] = mapped_column(Integer, primary_key=True)
     
 
     from_phone: Mapped[str] = mapped_column(
