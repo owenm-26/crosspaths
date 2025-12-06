@@ -1,0 +1,7 @@
+from enum import IntEnum
+
+class NotificationCode(IntEnum):
+    FRIEND_REQUEST = 1
+    FRIEND_ACCEPTED = 2
+    MESSAGE_RECEIVED = 3
+    EVENT_REMINDER = 4

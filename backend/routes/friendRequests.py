@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from db.db import get_db
 from db import models
 import pydantic 
+from routes.auth import get_current_user
+
 
 router = APIRouter()
 
@@ -24,3 +26,11 @@ def create_friend_request(payload: FriendRequestPayload, db: Session = Depends(g
 @router.get("/friend_requests")
 def get_friend_requests(db: Session = Depends(get_db)):
     return db.query(models.FriendRequest).all()
+
+@router.get("/friend_requests/user")
+def get_friend_requests_by_phone(user=Depends(get_current_user), db: Session = Depends(get_db)):
+    friend_requests = (
+        db.query(models.FriendRequest).filter(models.FriendRequest.to_phone == user.phone_number).all()
+    )
+
+    return friend_requests
