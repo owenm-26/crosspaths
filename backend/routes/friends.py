@@ -53,6 +53,9 @@ def get_friend_distances(user_phone: str, db: Session = Depends(get_db)):
     friend_distances = []
 
     for friend in friends:
+        if not friend.curr_location:
+            print(f"Friend {friend.phone_number} has a null location. Skipping.")
+            continue
         friend_distances.append(
             {
                 "user": friend,

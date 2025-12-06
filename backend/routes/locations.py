@@ -33,7 +33,7 @@ def update_user_location(db: Session, user_id: int, lat: float, lon: float):
 
 @router.post("/location/update")
 async def update_location(loc: LocationUpdate, user=Depends(get_current_user)):
-    print("Updating user location....")
+    print(f"Updating user ({user.phone_number}) location....")
     update_user_location(
         db=db,
         user_id=user.phone_number,

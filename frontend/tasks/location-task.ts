@@ -117,9 +117,10 @@ export async function requestLocationPermissions() {
       pausesUpdatesAutomatically: false,
       showsBackgroundLocationIndicator: true,
     });
+    console.log("(+) Started Location Task for user")
   }
 
-  console.log("(+) completed running requestLocationPermissions")
+  
 
   return true;
 }
