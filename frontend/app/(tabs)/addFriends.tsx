@@ -10,6 +10,7 @@ import {
 import { getUserBasicsById } from "@/services/users";
 import { UserBasics } from "@/types/user";
 import useAuth from "../hooks/AuthContext";
+import { deleteFriend, sendFriendRequest } from "@/services/friends";
 
 export default function AddFriends() {
   const [phone, setPhone] = useState("");
@@ -47,17 +48,19 @@ export default function AddFriends() {
     setLoading(false);
   };
 
-  const sendFriendshipUpdate = () => {
-    if (!result) return
-    console.log(`Sending friendship update from ${user?.phone_number} to ${result?.phone_number}. New friendship? ${!result.is_already_friend}`)
-    let m = "";
+  const sendFriendshipUpdate = async () => {
+    if (!result || !user) return
+    console.log(`Sending friendship update from ${user.phone_number} to ${result.phone_number}. New friendship? ${!result.is_already_friend}`)
+    let res;
     if (!result.is_already_friend){
-      m = `Sent Friendship invite to ${result?.phone_number}!`
+      res = await sendFriendRequest(user.phone_number, result.phone_number)
+      // m = `Sent Friendship invite to ${result?.phone_number}!`
     }else{
-      m = `Removed bidirectional friendship with ${result?.phone_number}.`
+      res = await deleteFriend(user.phone_number, result.phone_number)
+      // m = `Removed bidirectional friendship with ${result?.phone_number}.`
     }
 
-    setSentMessage(m)
+    setSentMessage(res.message)
     setPhone("")
     setResult(null)
     setTimeout(() => setSentMessage(""), 3000);

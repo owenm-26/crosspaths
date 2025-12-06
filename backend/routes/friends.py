@@ -128,3 +128,20 @@ def get_user_by_phone(req_phone_number: str, subj_phone_number: str, db: Session
         .first()
     ) != None
     return {"user": friend_user, "is_friend_already": is_friend_already}
+
+@router.delete("/remove-friend/by-phone/{req_phone_number}/{subj_phone_number}")
+def remove_friendship(req_phone_number: str, subj_phone_number: str, db: Session = Depends(get_db)):
+    # Query both directions of the friendship
+    friendships = db.query(models.Friend).filter(
+        ((models.Friend.user_phone == req_phone_number) & (models.Friend.friend_phone == subj_phone_number)) |
+        ((models.Friend.user_phone == subj_phone_number) & (models.Friend.friend_phone == req_phone_number))
+    ).all()
+
+    if not friendships:
+        raise HTTPException(status_code=404, detail="Friendship not found")
+
+    for friendship in friendships:
+        db.delete(friendship)
+
+    db.commit()
+    return {"message": f"Friendship between {req_phone_number} and {subj_phone_number} removed"}
