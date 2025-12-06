@@ -48,10 +48,10 @@ export default function AddFriends() {
   };
 
   const sendFriendshipUpdate = () => {
-    const addFriend = result?.is_already_friend ? false : true
-    console.log(`Sending friendship update from ${user?.phone_number} to ${result?.phone_number}. New friendship? ${addFriend}`)
+    if (!result) return
+    console.log(`Sending friendship update from ${user?.phone_number} to ${result?.phone_number}. New friendship? ${!result.is_already_friend}`)
     let m = "";
-    if (addFriend){
+    if (!result.is_already_friend){
       m = `Sent Friendship invite to ${result?.phone_number}!`
     }else{
       m = `Removed bidirectional friendship with ${result?.phone_number}.`
@@ -110,7 +110,7 @@ export default function AddFriends() {
             </Text>
           </View>
           <Text style={styles.phone}>{result.phone_number}</Text>
-          <TouchableOpacity onPress={sendFriendshipUpdate} style={styles.button}>
+          <TouchableOpacity onPress={sendFriendshipUpdate} style={[styles.button, result.is_already_friend && { backgroundColor: "#EF4444" }]}>
             <Text style={styles.buttonText}>{result.is_already_friend ? "Remove" : "Invite"}</Text>
           </TouchableOpacity>
         </View>
