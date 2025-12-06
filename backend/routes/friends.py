@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from db.db import get_db
 from db import models
 import geopy.distance
+from .users import get_user
+from typing import List
 
 router = APIRouter()
 
@@ -15,11 +17,25 @@ def create_friendship(user_phone: str, friend_phone: str, db: Session = Depends(
 
     if not db.query(models.User).filter(models.User.phone_number == friend_phone).first():
         raise HTTPException(status_code=404, detail="Friend user not found")
+    
+    # Sort phone numbers so small one always goes first
+    u1, u2 = sorted([user_phone, friend_phone])
 
-    f = models.Friend(user_phone=user_phone, friend_phone=friend_phone)
+    # Check existing friendship
+    existing = (
+        db.query(models.Friend)
+        .filter(models.Friend.user_phone == u1,
+                models.Friend.friend_phone == u2)
+        .first()
+    )
+
+    if existing:
+        return {"message": "Already friends"}
+
+    f = models.Friend(user_phone=u1, friend_phone=u2)
     db.add(f)
     db.commit()
-    return {"message": "Friend relationship added", "data": {"user": user_phone, "friend": friend_phone}}
+    return {"message": "Friend relationship added", "data": {"user": u1, "friend": u2}}
 
 
 @router.get("/friends")
@@ -42,11 +58,33 @@ def get_friend_distances(user_phone: str, db: Session = Depends(get_db)):
     if not user.curr_location or user.curr_location[0] != "(" or user.curr_location[-1] != ")":
         print(f"User's curr_location is malformed: {user.curr_location}")
         return []
-    # Query the user's friends
+    
+    # 1) Get Friend rows that involve this user
+    friend_rows: List[models.Friend] = (
+        db.query(models.Friend)
+        .filter(
+            (models.Friend.user_phone == user_phone) |
+            (models.Friend.friend_phone == user_phone)
+        )
+        .all()
+    )
+
+    # 2) Build a set of the *other* phone numbers
+    friend_phones = set()
+    for fr in friend_rows:
+        # pick the other side of the pair
+        if fr.user_phone == user_phone:
+            friend_phones.add(fr.friend_phone)
+        else:
+            friend_phones.add(fr.user_phone)
+
+    if not friend_phones:
+        return []
+
+    # 3) Fetch the User rows for those phone numbers in one query
     friends = (
         db.query(models.User)
-        .join(models.Friend, models.Friend.friend_phone == models.User.phone_number)
-        .filter(models.Friend.user_phone == user.phone_number)
+        .filter(models.User.phone_number.in_(list(friend_phones)))
         .all()
     )
 
@@ -76,3 +114,41 @@ def convert_coordinates_to_floats(str_coordinates: str) -> tuple[float]:
     nums = s.split(",")
 
     return (float(nums[0]), float(nums[1]))
+
+@router.get("/user/by-phone/{req_phone_number}/{subj_phone_number}")
+def get_user_by_phone(req_phone_number: str, subj_phone_number: str, db: Session = Depends(get_db)):
+    friend_user = get_user(phone_number=subj_phone_number, db=db)
+
+    u1, u2 = sorted([req_phone_number, subj_phone_number])
+
+    is_friend_already = (
+        db.query(models.Friend)
+        .filter((models.Friend.user_phone == u1) &
+    (models.Friend.friend_phone == u2))
+        .first()
+    ) != None
+
+    already_pending_friend = (
+        db.query(models.FriendRequest)
+        .filter((models.FriendRequest.from_phone == u1) & 
+        (models.FriendRequest.to_phone == u2))
+        .first()
+    ) != None
+    return {"user": friend_user, "is_friend_already": is_friend_already, "already_pending_friend": already_pending_friend}
+
+@router.delete("/remove-friend/by-phone/{req_phone_number}/{subj_phone_number}")
+def remove_friendship(req_phone_number: str, subj_phone_number: str, db: Session = Depends(get_db)):
+    # Query both directions of the friendship
+    friendships = db.query(models.Friend).filter(
+        ((models.Friend.user_phone == req_phone_number) & (models.Friend.friend_phone == subj_phone_number)) |
+        ((models.Friend.user_phone == subj_phone_number) & (models.Friend.friend_phone == req_phone_number))
+    ).all()
+
+    if not friendships:
+        raise HTTPException(status_code=404, detail="Friendship not found")
+
+    for friendship in friendships:
+        db.delete(friendship)
+
+    db.commit()
+    return {"message": f"Friendship between {req_phone_number} and {subj_phone_number} removed"}
