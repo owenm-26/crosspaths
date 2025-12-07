@@ -1,4 +1,5 @@
 from sqlalchemy import String, DateTime, Float, func, ForeignKey, Integer
+from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 from security.password import Password
 from security.hashing import PasswordHash
@@ -8,7 +9,7 @@ from .db import Base
 class User(Base):
     __tablename__ = "users"
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), onupdate=func.now())
     phone_number: Mapped[str] = mapped_column(String, primary_key=True, index=True)
     # email: Mapped[str] = mapped_column(String, unique=True, index=True, nullable=False)
     first_name: Mapped[str] = mapped_column(String, nullable=False)
@@ -109,9 +110,11 @@ class FriendRequest(Base):
         primary_key=True
     )
 
-    accepted: Mapped[float] = mapped_column(
-        Float, nullable=False, server_default="0"
-    )
+    # accepted: Mapped[float] = mapped_column(
+    #     Float, nullable=False, server_default="0"
+    # )
+
+    timestamp: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # ORM relationships
     user: Mapped["User"] = relationship(
@@ -131,7 +134,8 @@ class Inbox(Base):
     __tablename__="inbox"
 
     notification: Mapped[int] = mapped_column(Integer, primary_key=True)
-    
+
+    timestamp: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     from_phone: Mapped[str] = mapped_column(
         ForeignKey("users.phone_number"),
