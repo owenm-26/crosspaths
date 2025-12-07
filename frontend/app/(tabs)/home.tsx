@@ -19,7 +19,11 @@ export default function Home() {
       }
     const res = await getFriendDistances(user?.phone_number)
 
-    if(res) setFriendDistances(res)
+    if(!res) return;
+
+    const sortedDistances = res.sort((a:FriendDistance, b:FriendDistance) => a.distance - b.distance)
+
+    setFriendDistances(sortedDistances)
     setLoading(false);
     }
     getDistance()
