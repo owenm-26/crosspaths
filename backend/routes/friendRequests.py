@@ -88,8 +88,8 @@ def take_action_on_friend_request_and_send_notification(u1: models.User, u2: mod
     receiver = ""
     status = ""
     if accept:
-        actor = req.from_phone
-        receiver = req.to_phone
+        actor = req.to_phone
+        receiver = req.from_phone
         status = NotificationCode.FRIEND_ACCEPTED
     else:
         actor = req.to_phone

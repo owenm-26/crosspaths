@@ -133,18 +133,18 @@ class Inbox(Base):
 
     __tablename__="inbox"
 
-    notification: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, nullable=False)
+
+    notification: Mapped[int] = mapped_column(Integer)
 
     timestamp: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     from_phone: Mapped[str] = mapped_column(
         ForeignKey("users.phone_number"),
-        primary_key=True
     )
 
     to_phone: Mapped[str] = mapped_column(
         ForeignKey("users.phone_number"),
-        primary_key=True
     )
 
     # ORM relationships
