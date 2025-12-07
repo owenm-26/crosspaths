@@ -5,21 +5,22 @@ from db import models
 import geopy.distance
 from .users import get_user
 from typing import List
-
+from db.notification_codes import NotificationCode
+from .friendRequests import take_action_on_friend_request_and_send_notification
+from interfaces.friendship import FriendshipPayload
 router = APIRouter()
 
-
 @router.post("/friends")
-def create_friendship(user_phone: str, friend_phone: str, db: Session = Depends(get_db)):
+def create_friendship(payload: FriendshipPayload, db: Session = Depends(get_db)):
     # Ensure both users exist
-    if not db.query(models.User).filter(models.User.phone_number == user_phone).first():
+    if not db.query(models.User).filter(models.User.phone_number == payload.user_phone).first():
         raise HTTPException(status_code=404, detail="User not found")
 
-    if not db.query(models.User).filter(models.User.phone_number == friend_phone).first():
+    if not db.query(models.User).filter(models.User.phone_number == payload.friend_phone).first():
         raise HTTPException(status_code=404, detail="Friend user not found")
     
     # Sort phone numbers so small one always goes first
-    u1, u2 = sorted([user_phone, friend_phone])
+    u1, u2 = sorted([payload.user_phone, payload.friend_phone])
 
     # Check existing friendship
     existing = (
@@ -31,6 +32,9 @@ def create_friendship(user_phone: str, friend_phone: str, db: Session = Depends(
 
     if existing:
         return {"message": "Already friends"}
+    
+    # delete friend request and create notifications
+    take_action_on_friend_request_and_send_notification(u1=u1, u2=u2, accept=True, db=db)
 
     f = models.Friend(user_phone=u1, friend_phone=u2)
     db.add(f)
