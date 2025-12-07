@@ -17,8 +17,7 @@ export default function Inbox() {
   const [loading, setLoading] = useState(true);
   const [pendingRequests, setPendingRequests] = useState<FriendRequest[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [sentMessage, setSentMessage] = useState<String>("")
-
+  const [sentMessage, setSentMessage] = useState<String>("");
 
   useEffect(() => {
     const fetchInbox = async () => {
@@ -27,6 +26,8 @@ export default function Inbox() {
       try {
         const requests = await getPendingFriendRequests();
         const notifs = await getNotifications();
+
+        console.log(notifs.data);
 
         setPendingRequests(requests || []);
         setNotifications(notifs.data || []);
@@ -53,14 +54,16 @@ export default function Inbox() {
 
     const res = await acceptFriend(user.phone_number, request);
 
-    if(res.status!=200){
-      console.error(`Error: ${res}`)
+    if (res.status != 200) {
+      console.error(`Error: ${res}`);
     }
 
     setPendingRequests((prev) =>
       prev.filter((item) => item.from_phone !== request.from_phone)
     );
-    setSentMessage(`Added ${request.first_name} ${request.last_name} as a friend!`)
+    setSentMessage(
+      `Added ${request.first_name} ${request.last_name} as a friend!`
+    );
     setTimeout(() => setSentMessage(""), 3000);
   };
 
@@ -69,15 +72,17 @@ export default function Inbox() {
 
     const res = await rejectFriend(user.phone_number, request);
 
-    if(res.status!=200){
-      console.error(`Error: ${res}`)
+    if (res.status != 200) {
+      console.error(`Error: ${res}`);
     }
 
     setPendingRequests((prev) =>
       prev.filter((item) => item.from_phone !== request.from_phone)
     );
 
-    setSentMessage(`Rejected ${request.first_name} ${request.last_name}'s request`)
+    setSentMessage(
+      `Rejected ${request.first_name} ${request.last_name}'s request`
+    );
     setTimeout(() => setSentMessage(""), 3000);
   };
 
@@ -92,7 +97,9 @@ export default function Inbox() {
             marginBottom: 10,
           }}
         >
-          <Text style={{ color: "black", textAlign: "center", fontWeight: "600" }}>
+          <Text
+            style={{ color: "black", textAlign: "center", fontWeight: "600" }}
+          >
             {sentMessage}
           </Text>
         </View>
@@ -141,17 +148,61 @@ export default function Inbox() {
           data={notifications}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ paddingBottom: 20 }}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text style={styles.name}>{item.message}</Text>
-              <Text style={styles.notificationTime}>{item.time}</Text>
-            </View>
-          )}
+          renderItem={({ item }) => {
+            const style = NOTIFICATION_STYLES[item.notification] ?? {
+              color: "#E5E7EB",
+              emoji: "🔔",
+              text: "sent you a notification",
+            };
+
+            return (
+              <View style={[styles.card, { backgroundColor: style.color }]}>
+                <Text style={styles.emoji}>{style.emoji}</Text>
+
+                <View style={{ flex: 1, paddingLeft: 10 }}>
+                  <Text style={styles.name}>
+                    {item.from_name} {item.from_phone} {style.text}
+                  </Text>
+                  <Text style={styles.notificationTime}>{item.time}</Text>
+                </View>
+              </View>
+            );
+          }}
         />
       )}
     </View>
   );
 }
+
+const NOTIFICATION_STYLES: Record<
+  number,
+  {
+    color: string;
+    emoji: string;
+    text: string;
+  }
+> = {
+  0: {
+    color: "#DBEAFE",
+    emoji: "👋",
+    text: "sent you a friend request",
+  },
+  2: {
+    color: "#DCFCE7",
+    emoji: "🤝",
+    text: "accepted your friend request",
+  },
+  3: {
+    color: "#FEE2E2",
+    emoji: "❌",
+    text: "denied your friend request",
+  },
+  4: {
+    color: "#FEF9C3",
+    emoji: "📩",
+    text: "sent you a message",
+  },
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -189,10 +240,30 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  name: {
-    fontSize: 18,
-    fontWeight: "600",
+  // card: {
+  //   marginTop: 15,
+  //   padding: 14,
+  //   borderRadius: 12,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  // },
+  emoji: {
+    fontSize: 28,
   },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111827",
+  },
+  notificationTime: {
+    color: "#6B7280",
+    marginTop: 4,
+    fontSize: 13,
+  },
+  // name: {
+  //   fontSize: 18,
+  //   fontWeight: "600",
+  // },
   phone: {
     fontSize: 16,
     fontWeight: "700",
@@ -210,9 +281,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
   },
-  notificationTime: {
-    color: "#888",
-    marginTop: 4,
-    fontSize: 14,
-  },
+  // notificationTime: {
+  //   color: "#888",
+  //   marginTop: 4,
+  //   fontSize: 14,
+  // },
 });

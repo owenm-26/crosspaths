@@ -5,7 +5,7 @@ export interface FriendRequest {
 }
 
 export interface Notification {
-  notification_code: number; // The numeric code from your Inbox.notification
+  notification: number; // The numeric code from your Inbox.notification
   from_phone: string; // Who sent the notification
   to_phone: string; // Who receives it
   message: string; // Human-readable message for the UI

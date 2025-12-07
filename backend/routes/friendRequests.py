@@ -85,7 +85,7 @@ def take_action_on_friend_request_and_send_notification(u1: models.User, u2: mod
     notifs = []
     actor = ""
     receiver = ""
-    status
+    status = ""
     if accept:
         actor = req.from_phone
         receiver = req.to_phone
