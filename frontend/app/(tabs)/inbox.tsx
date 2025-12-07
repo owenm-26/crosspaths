@@ -27,10 +27,18 @@ export default function Inbox() {
         const requests = await getPendingFriendRequests();
         const notifs = await getNotifications();
 
-        console.log(notifs.data);
+        // console.log(notifs.data);
+        const sortedNotifs = notifs.data.sort(
+          (a: Notification, b: Notification) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        const sortedPendingRequests = requests.sort(
+          (a: FriendRequest, b: FriendRequest) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
 
-        setPendingRequests(requests || []);
-        setNotifications(notifs.data || []);
+        setPendingRequests(sortedPendingRequests || []);
+        setNotifications(sortedNotifs || []);
       } catch (err) {
         console.log("Inbox fetch error:", err);
       } finally {
@@ -86,6 +94,24 @@ export default function Inbox() {
     setTimeout(() => setSentMessage(""), 3000);
   };
 
+  function timeAgo(timestamp: string) {
+    const now = Date.now();
+    const then = new Date(timestamp).getTime();
+
+    const diffMs = now - then;
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days >= 1) {
+      return `${days} day${days > 1 ? "s" : ""} ago`;
+    }
+    if (hours >= 1) {
+      return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+    }
+    return `${minutes} minute${minutes > 1 ? "s" : ""} ago`;
+  }
+
   return (
     <View style={styles.container}>
       {sentMessage ? (
@@ -120,6 +146,9 @@ export default function Inbox() {
                   {item.first_name} {item.last_name}
                 </Text>
                 <Text style={styles.phone}>{item.from_phone}</Text>
+                <Text style={styles.timestamp}>
+                  {timeAgo(item.timestamp)}
+                </Text>
               </View>
               <TouchableOpacity
                 style={styles.button}
@@ -161,9 +190,11 @@ export default function Inbox() {
 
                 <View style={{ flex: 1, paddingLeft: 10 }}>
                   <Text style={styles.name}>
-                    {item.from_name} {item.from_phone} {style.text}
+                    {item.from_phone} {style.text}
                   </Text>
-                  <Text style={styles.notificationTime}>{item.time}</Text>
+                  <Text style={styles.timestamp}>
+                    {timeAgo(item.timestamp)}
+                  </Text>
                 </View>
               </View>
             );
@@ -281,6 +312,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "700",
   },
+  timestamp: {
+  fontSize: 12,
+  color: "#6B7280", // soft grey
+  marginTop: 6,
+  alignSelf: "flex-end",
+},
   // notificationTime: {
   //   color: "#888",
   //   marginTop: 4,

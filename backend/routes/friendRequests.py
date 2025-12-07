@@ -32,7 +32,7 @@ def get_friend_requests_by_phone(user=Depends(get_current_user), db: Session = D
         .options(joinedload(models.FriendRequest.user))  # eager load the 'user' relationship
         .filter(
             models.FriendRequest.to_phone == user.phone_number,
-            models.FriendRequest.accepted == 0  # Only pending requests
+            # models.FriendRequest.accepted == 0  # Only pending requests
         )
         .all()
     )
@@ -42,7 +42,8 @@ def get_friend_requests_by_phone(user=Depends(get_current_user), db: Session = D
         {
             "from_phone": fr.from_phone,
             "first_name": fr.user.first_name if fr.user else None,
-            "last_name": fr.user.last_name if fr.user else None
+            "last_name": fr.user.last_name if fr.user else None,
+            "timestamp": fr.timestamp
         }
         for fr in friend_requests
     ]

@@ -18,6 +18,7 @@ export const getPendingFriendRequests = async () => {
       from_phone: item.from_phone,
       first_name: item.first_name,
       last_name: item.last_name,
+      timestamp: item.timestamp
     })
   );
 
